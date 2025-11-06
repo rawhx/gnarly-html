@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Gnarly | Manajemen Barang - Mutasi</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+  </head>
+  <body
+    x-data="{ page: 'mutasi', loaded: true, darkMode: false, stickyMenu: false, sidebarToggle: false, scrollTop: false }"
+    x-init="
+      darkMode = JSON.parse(localStorage.getItem('darkMode'));
+      $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))
+    "
+    :class="{ 'dark bg-gray-900': darkMode === true }"
+  >
+    <include src="./partials/preloader.html"></include>
+
+    <div class="flex h-screen overflow-hidden">
+      <include src="./partials/sidebar.html"></include>
+
+      <div
+        class="relative flex flex-1 flex-col overflow-x-hidden overflow-y-auto"
+      >
+        <include src="./partials/overlay.html" />
+        <include src="./partials/header.html" />
+
+        <main>
+          <div class="mx-auto max-w-7xl p-4 md:p-6">
+            <!-- Breadcrumb -->
+            <div x-data="{ pageName: 'Mutasi' }">
+              <include src="./partials/breadcrumb.html" />
+            </div>
+
+            <!-- === Tampilan 1: Tabel Mutasi === -->
+            <div
+              id="tampilanTable"
+              class="min-h-screen rounded-2xl border border-gray-200 bg-white px-10 py-7 xl:py-12 dark:border-gray-800 dark:bg-white/[0.03]"
+            >
+              <div class="mb-4 flex items-center justify-between">
+                <h4 class="text-xl font-bold">Data Mutasi</h4>
+                <button
+                  onclick="bukaFormTambah()"
+                  class="rounded bg-green-500 px-4 py-2 text-sm text-white shadow hover:bg-green-600"
+                >
+                  Tambah Mutasi
+                </button>
+              </div>
+
+              <table class="min-w-full border border-gray-200 text-sm">
+                <thead class="bg-gray-100">
+                  <tr>
+                    <th
+                      class="border-b px-3 py-2 text-left font-semibold text-gray-700"
+                    >
+                      No
+                    </th>
+                    <th
+                      class="border-b px-3 py-2 text-left font-semibold text-gray-700"
+                    >
+                      Kode
+                    </th>
+                    <th
+                      class="border-b px-3 py-2 text-left font-semibold text-gray-700"
+                    >
+                      Nama
+                    </th>
+                    <th
+                      class="border-b px-3 py-2 text-left font-semibold text-gray-700"
+                    >
+                      Tipe
+                    </th>
+                    <th
+                      class="border-b px-3 py-2 text-left font-semibold text-gray-700"
+                    >
+                      Qty
+                    </th>
+                    <th
+                      class="border-b px-3 py-2 text-left font-semibold text-gray-700"
+                    >
+                      Lokasi Asal
+                    </th>
+                    <th
+                      class="border-b px-3 py-2 text-left font-semibold text-gray-700"
+                    >
+                      Lokasi Tujuan
+                    </th>
+                    <th
+                      class="border-b px-3 py-2 text-left font-semibold text-gray-700"
+                    >
+                      Status
+                    </th>
+                    <th
+                      class="border-b px-3 py-2 text-left font-semibold text-gray-700"
+                    >
+                      Tanggal
+                    </th>
+                  </tr>
+                </thead>
+                <tbody
+                  class="divide-y divide-gray-200"
+                  id="mutasiTbody"
+                ></tbody>
+              </table>
+            </div>
+
+            <!-- === Tampilan 2: Form Tambah Mutasi === -->
+            <div
+              id="tampilanForm"
+              class="hidden min-h-screen rounded-2xl border border-gray-200 bg-white px-10 py-7 xl:py-12 dark:border-gray-800 dark:bg-white/[0.03]"
+              x-data="requestForm()"
+            >
+              <div class="mb-4 flex items-center justify-between">
+                <h4 class="text-xl font-bold">Tambah Mutasi Barang</h4>
+                <button
+                  onclick="kembaliKeTable()"
+                  class="rounded bg-gray-400 px-4 py-2 text-sm text-white hover:bg-gray-500"
+                >
+                  Kembali
+                </button>
+              </div>
+
+              <form @submit.prevent="submitRequest()" class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >Tipe</label
+                  >
+                  <select
+                    id="tipe"
+                    x-model="tipe"
+                    @change="onTipeChange()"
+                    class="mt-1 block w-full rounded border p-2"
+                  >
+                    <option value="Request">Request</option>
+                    <option value="Retur">Retur</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >Kode Barang</label
+                  >
+                  <select
+                    id="kodeBarangSelect"
+                    x-model="kode"
+                    @change="fillData()"
+                    class="mt-1 block w-full rounded border p-2"
+                  >
+                    <option value="">Pilih Barang</option>
+                    <template x-for="item in barangs" :key="item.id">
+                      <option
+                        :value="item.kode_barang"
+                        :data-nama="item.nama_barang"
+                        :data-stok="item.qty"
+                        :data-exp="item.tanggal_kadaluarsa.split('T')[0]"
+                      >
+                        <span
+                          x-text="item.kode_barang + ' - ' + item.nama_barang"
+                        ></span>
+                      </option>
+                    </template>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >Nama Barang</label
+                  >
+                  <input
+                    type="text"
+                    x-model="nama"
+                    readonly
+                    class="mt-1 block w-full rounded border bg-gray-100 p-2"
+                  />
+                </div>
+
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700"
+                      >Lokasi Asal</label
+                    >
+                    <input
+                      type="text"
+                      x-model="lokasiAsal"
+                      readonly
+                      class="mt-1 block w-full rounded border bg-gray-100 p-2"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700"
+                      >Lokasi Tujuan</label
+                    >
+                    <input
+                      type="text"
+                      x-model="lokasiTujuan"
+                      readonly
+                      class="mt-1 block w-full rounded border bg-gray-100 p-2"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >Stok Asal</label
+                  >
+                  <input
+                    type="number"
+                    x-model="stok"
+                    readonly
+                    class="mt-1 block w-full rounded border bg-gray-100 p-2"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >Qty</label
+                  >
+                  <input
+                    type="number"
+                    x-model.number="qty"
+                    min="1"
+                    :max="stok"
+                    class="mt-1 block w-full rounded border p-2"
+                  />
+                  <p x-show="qty > stok" class="mt-1 text-sm text-red-500">
+                    Qty tidak boleh lebih dari stok!
+                  </p>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >Kadaluarsa</label
+                  >
+                  <input
+                    type="text"
+                    x-model="kadaluarsa"
+                    readonly
+                    class="mt-1 block w-full rounded border bg-gray-100 p-2"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700"
+                    >Tanggal</label
+                  >
+                  <input
+                    type="date"
+                    x-model="tanggal"
+                    disabled
+                    class="mt-1 block w-full cursor-not-allowed rounded border p-2"
+                  />
+                </div>
+
+                <div class="mt-4 flex justify-end gap-2">
+                  <button
+                    type="submit"
+                    class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                  >
+                    Simpan
+                  </button>
+                  <button
+                    type="button"
+                    @click="resetForm()"
+                    class="rounded bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-400"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+          <script src="./js/axios.js"></script>
+          <script>
+            document.addEventListener("alpine:init", () => {
+              loadMutasi();
+              Alpine.data("requestForm", () => ({
+                tipe: "Request",
+                kode: "",
+                nama: "",
+                stok: 0,
+                qty: 1,
+                id_barang: null,
+                kadaluarsa: "",
+                tanggal: new Date().toISOString().split("T")[0],
+                lokasiAsal: "Gudang",
+                lokasiTujuan: "Toko",
+                barangs: [],
+                tomSelect: null,
+
+                init() {
+                  this.updateLokasi();
+                  this.loadBarang();
+
+                  // Inisialisasi TomSelect
+                  this.tomSelect = new TomSelect("#kodeBarangSelect", {
+                    searchField: ["text", "value"],
+                    placeholder: "Cari kode atau nama barang...",
+                    create: false,
+                    onChange: () => this.fillData(),
+                  });
+                },
+
+                onTipeChange() {
+                  this.updateLokasi();
+                  this.loadBarang();
+                },
+
+                resetForm() {
+                  this.tipe = "Request";
+                  this.kode = "";
+                  this.nama = "";
+                  this.stok = 0;
+                  this.qty = 1;
+                  this.id_barang = null;
+                  this.kadaluarsa = "";
+                  this.tanggal = new Date().toISOString().split("T")[0];
+                  this.lokasiAsal = "Gudang";
+                  this.lokasiTujuan = "Toko";
+
+                  if (this.tomSelect) {
+                    this.tomSelect.clear();
+                    this.tomSelect.clearOptions();
+                    this.tomSelect.sync(); // <- wajib biar cache bersih
+                  }
+                  this.loadBarang();
+                },
+
+                updateLokasi() {
+                  if (this.tipe === "Request") {
+                    this.lokasiAsal = "Gudang";
+                    this.lokasiTujuan = "Toko";
+                  } else {
+                    this.lokasiAsal = "Toko";
+                    this.lokasiTujuan = "Gudang";
+                  }
+                },
+
+                async loadBarang() {
+                  try {
+                    const response = await api.get("/admin/barang/select", {
+                      params: { tipe: this.tipe },
+                    });
+
+                    this.barangs =
+                      response.status === 200 ? response.data.data : [];
+
+                    // Hapus TomSelect lama jika sudah ada
+                    if (this.tomSelect) {
+                      this.tomSelect.destroy();
+                      this.tomSelect = null;
+                    }
+
+                    // Ambil elemen select
+                    const selectEl =
+                      document.getElementById("kodeBarangSelect");
+
+                    // Kosongkan opsi HTML sepenuhnya
+                    selectEl.innerHTML = `<option value="">Pilih Barang</option>`;
+
+                    // Masukkan data baru ke <option>
+                    this.barangs.forEach((item) => {
+                      const opt = document.createElement("option");
+                      opt.value = item.kode_barang;
+                      opt.textContent =
+                        item.kode_barang + " - " + item.nama_barang;
+                      opt.dataset.nama = item.nama_barang;
+                      opt.dataset.stok = item.qty;
+                      opt.dataset.id_barang = item.id_detail_barang;
+                      opt.dataset.exp = item.tanggal_kadaluarsa.split("T")[0];
+                      selectEl.appendChild(opt);
+                    });
+
+                    // Init TomSelect baru
+                    this.tomSelect = new TomSelect("#kodeBarangSelect", {
+                      searchField: ["text", "value"],
+                      placeholder: "Cari kode / nama barang...",
+                      create: false,
+                      onChange: () => this.fillData(),
+                    });
+                  } catch (err) {
+                    console.error("Gagal mengambil data barang:", err);
+                    this.barangs = [];
+                  }
+                },
+
+                fillData() {
+                  if (!this.tomSelect) return;
+                  const value = this.tomSelect.getValue();
+                  const selected = this.tomSelect.options[value];
+                  if (selected) {
+                    this.nama = selected.nama || "";
+                    this.stok = parseInt(selected.stok) || 0;
+                    this.kadaluarsa = selected.exp || "";
+                    this.id_barang = selected.id_barang || null;
+                    if (this.qty > this.stok) this.qty = this.stok;
+                  } else {
+                    this.nama = "";
+                    this.stok = 0;
+                    this.kadaluarsa = "";
+                    this.id_barang = null;
+                  }
+                },
+
+                async submitRequest() {
+                  if (!this.kode) {
+                    alert("Kode barang harus dipilih.");
+                    return;
+                  }
+                  if (this.qty < 1 || this.qty > this.stok) {
+                    alert("Qty tidak valid.");
+                    return;
+                  }
+
+                  try {
+                    const payload = {
+                      id_barang: this.id_barang,
+                      tipe: this.tipe,
+                      kode_barang: this.kode,
+                      qty: this.qty,
+                      tanggal: this.tanggal,
+                    };
+
+                    const response = await api.post("/admin/mutasi", payload);
+
+                    if (response.status === 201 || response.status === 200) {
+                      alert("Mutasi berhasil ditambahkan.");
+
+                      // Tambahkan langsung ke tabel DOM tanpa reload
+                      const tbody = document.getElementById("mutasiTbody");
+                      const newRow = document.createElement("tr");
+                      const nextNo = tbody.children.length + 1;
+
+                      newRow.innerHTML = `
+                        <td class="px-3 py-2">${nextNo}</td>
+                        <td class="px-3 py-2">${this.kode}</td>
+                        <td class="px-3 py-2">${this.nama}</td>
+                        <td class="px-3 py-2">${this.tipe}</td>
+                        <td class="px-3 py-2">${this.qty}</td>
+                        <td class="px-3 py-2">${this.lokasiAsal}</td>
+                        <td class="px-3 py-2">${this.lokasiTujuan}</td>
+                        <td class="px-3 py-2">
+                          <span class="rounded bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-700">Menunggu</span>
+                        </td>
+                        <td class="px-3 py-2">${this.tanggal.split("-").reverse().join("/")}</td>
+                      `;
+                      tbody.appendChild(newRow);
+
+                      // Reset form & tutup form
+                      this.resetForm();
+                      document
+                        .getElementById("tampilanForm")
+                        .classList.add("hidden");
+                      document
+                        .getElementById("tampilanTable")
+                        .classList.remove("hidden");
+                    }
+                  } catch (err) {
+                    console.error("Gagal menambahkan mutasi:", err);
+                    alert("Gagal menambahkan mutasi. Silakan coba lagi.");
+                  }
+                },
+              }));
+            });
+
+            // tombol Tambah / Kembali
+            function bukaFormTambah() {
+              document.getElementById("tampilanTable").classList.add("hidden");
+              document
+                .getElementById("tampilanForm")
+                .classList.remove("hidden");
+            }
+
+            function kembaliKeTable() {
+              const formData = document.querySelector(
+                '[x-data="requestForm()"]',
+              );
+              if (formData && formData.__x) {
+                formData.__x.$data.resetForm();
+                formData.__x.$data.loadBarang();
+              }
+              document.getElementById("tampilanForm").classList.add("hidden");
+              document
+                .getElementById("tampilanTable")
+                .classList.remove("hidden");
+            }
+
+            // fallback form submit
+            async function submitRequestFallback(event) {
+              event.preventDefault();
+              const formData = document.querySelector(
+                '[x-data="requestForm()"]',
+              );
+              if (!formData || !formData.__x) return;
+
+              await formData.__x.$data.submitRequest();
+            }
+
+            async function loadMutasi() {
+              try {
+                const res = await api.get("/admin/mutasi");
+                const data = res.data.data || [];
+
+                const tbody = document.getElementById("mutasiTbody");
+                tbody.innerHTML = "";
+
+                data.forEach((row, index) => {
+                  // Format status badge warna
+                  let statusBadgeClass =
+                    row.status === "Diterima"
+                      ? "bg-green-100 text-green-700"
+                      : row.status === "Ditolak"
+                        ? "bg-red-100 text-red-700"
+                        : "bg-yellow-100 text-yellow-700";
+
+                  // Format tanggal (YYYY-MM-DD -> DD/MM/YYYY)
+                  let tgl = row.tanggal
+                    ? new Date(row.tanggal).toLocaleDateString("id-ID")
+                    : "-";
+
+                  tbody.innerHTML += `
+                      <tr>
+                        <td class="px-3 py-2">${index + 1}</td>
+                        <td class="px-3 py-2">${row.kode_barang}</td>
+                        <td class="px-3 py-2">${row.nama_barang}</td>
+                        <td class="px-3 py-2">${row.tipe}</td>
+                        <td class="px-3 py-2">${row.qty_mutasi}</td>
+                        <td class="px-3 py-2">${row.lokasi_asal}</td>
+                        <td class="px-3 py-2">${row.lokasi_tujuan}</td>
+                        <td class="px-3 py-2">
+                          <span class="rounded px-2 py-1 text-xs font-medium ${statusBadgeClass}">
+                            ${row.status}
+                          </span>
+                        </td>
+                        <td class="px-3 py-2">${tgl}</td>
+                      </tr>
+                    `;
+                });
+
+                if (data.length === 0) {
+                  tbody.innerHTML = `
+                      <tr>
+                        <td colspan="9" class="text-center py-4 text-gray-500">
+                          Tidak ada data mutasi
+                        </td>
+                      </tr>
+                    `;
+                }
+              } catch (err) {
+                console.error(err);
+              }
+            }
+          </script>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

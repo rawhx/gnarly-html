@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>
+      Gnarly | POS
+    </title>
+  </head>
+  <body
+    x-data="{ page: 'POS', 'loaded': true, 'darkMode': false, 'stickyMenu': false, 'sidebarToggle': false, 'scrollTop': false }"
+    x-init="
+         darkMode = JSON.parse(localStorage.getItem('darkMode'));
+         $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))"
+    :class="{'dark bg-gray-900': darkMode === true}"
+  >
+    <!-- ===== Preloader Start ===== -->
+    <include src="./partials/preloader.html"></include>
+    <!-- ===== Preloader End ===== -->
+
+    <!-- ===== Page Wrapper Start ===== -->
+    <div class="flex h-screen overflow-hidden">
+        <include src="./partials/sidebar.html"></include>
+
+      <!-- ===== Content Area Start ===== -->
+      <div
+        class="relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto"
+      >
+        <!-- Small Device Overlay Start -->
+        <include src="./partials/overlay.html" />
+        <!-- Small Device Overlay End -->
+
+        <!-- ===== Header Start ===== -->
+        <include src="./partials/header.html" />
+        <!-- ===== Header End ===== -->
+
+        <!-- ===== Main Content Start ===== -->
+        <main>
+            <div class="p-4 mx-auto max-w-[1280px] md:p-6">
+                <div class="grid grid-cols-12 gap-4 md:gap-6">
+                    <!-- Konten Kiri -->
+                    <div class="col-span-12 lg:col-span-8 bg-white rounded-lg h-fit p-5 shadow-sm overflow-y-auto">
+                        <h4 class="text-2xl font-bold mb-4">Data Barang</h4>
+
+                        <!-- Tabel Data Barang -->
+                        <table class="min-w-full border border-gray-200" id="tabelBarang">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700 border-b">Kode Barang</th>
+                                    <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700 border-b">Nama Barang</th>
+                                    <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700 border-b">Harga</th>
+                                    <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700 border-b">Qty</th>
+                                    <th class="py-2 px-4 text-sm font-semibold text-gray-700 border-b">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr data-kode="BRG001" data-nama="Barang 1" data-harga="15000">
+                                    <td class="py-2 px-4 text-sm text-gray-600">BRG001</td>
+                                    <td class="py-2 px-4 text-sm text-gray-800">Barang 1</td>
+                                    <td class="py-2 px-4 text-sm text-gray-600">Rp 15.000</td>
+                                    <td class="py-2 px-4 text-sm text-gray-600">10</td>
+                                    <td class="py-2 px-4">
+                                        <button class="addToTransaksi bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">Tambah</button>
+                                    </td>
+                                </tr>
+                                <tr data-kode="BRG002" data-nama="Barang 2" data-harga="20000">
+                                    <td class="py-2 px-4 text-sm text-gray-600">BRG002</td>
+                                    <td class="py-2 px-4 text-sm text-gray-800">Barang 2</td>
+                                    <td class="py-2 px-4 text-sm text-gray-600">Rp 20.000</td>
+                                    <td class="py-2 px-4 text-sm text-gray-600">5</td>
+                                    <td class="py-2 px-4">
+                                        <button class="addToTransaksi bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">Tambah</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                    <!-- Konten Kanan / Transaksi -->
+                    <div class="col-span-12 lg:col-span-4 flex flex-col shadow-sm bg-white p-5 h-fit rounded-lg">
+                        <!-- Judul -->
+                        <h4 class="text-2xl font-bold">Transaksi</h4>
+                        <hr class="border-gray-300 my-3">
+
+                        <!-- Daftar Barang -->
+                       <div class="max-h-[20rem] overflow-y-auto" id="transaksiList">
+                            <!-- Barang akan ditambahkan di sini -->
+                        </div>
+
+                        <hr class="border-gray-300 my-3">
+
+                        <!-- Total -->
+                        <div class="flex justify-between items-center mb-3">
+                            <h2 class="text-xl font-semibold">Total</h2>
+                            <h2 id="total_transaksi" class="text-xl font-semibold">Rp 0.00</h2>
+                        </div>
+
+                        <!-- Tombol Bayar -->
+                        <button class="inline-flex w-full justify-center items-center gap-2 px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-green-500 shadow-theme-xs hover:bg-green-600">
+                            Bayar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            </main>
+
+        <!-- ===== Main Content End ===== -->
+      </div>
+      <!-- ===== Content Area End ===== -->
+    </div>
+    <!-- ===== Page Wrapper End ===== -->
+  </body>
+</html>
+
+<script>
+    const addButtons = document.querySelectorAll('.addToTransaksi');
+    const transaksiList = document.getElementById('transaksiList');
+    const totalElem = document.getElementById('total_transaksi');
+    let total = 0;
+
+    addButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const row = e.target.closest('tr');
+            const kode = row.dataset.kode;
+            const nama = row.dataset.nama;
+            const harga = parseInt(row.dataset.harga);
+
+            // Cek apakah barang sudah ada di transaksi
+            let existing = transaksiList.querySelector(`[data-kode="${kode}"]`);
+            if (existing) {
+                let qtyElem = existing.querySelector('.qty');
+                let qty = parseInt(qtyElem.textContent);
+                qty++;
+                qtyElem.textContent = qty;
+            } else {
+                // Tambahkan ke transaksi
+                const item = document.createElement('div');
+                item.classList.add('flex', 'justify-between', 'items-center', 'py-2', 'border-b', 'border-gray-200');
+                item.dataset.kode = kode;
+                item.innerHTML = `
+                    <div class="flex-1">
+                        <h5 class="font-medium">${nama}</h5>
+                        <p class="text-sm text-gray-500">Rp ${harga.toLocaleString()}</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 decrement">-</button>
+                        <span class="w-6 text-center qty">1</span>
+                        <button class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 increment">+</button>
+                        <button class="ml-2 text-red-500 font-bold hover:text-red-600 remove">×</button>
+                    </div>
+                `;
+                transaksiList.appendChild(item);
+
+                // Tambahkan event untuk +, -, ×
+                const incrementBtn = item.querySelector('.increment');
+                const decrementBtn = item.querySelector('.decrement');
+                const removeBtn = item.querySelector('.remove');
+                const qtyElem = item.querySelector('.qty');
+
+                incrementBtn.addEventListener('click', () => {
+                    let qty = parseInt(qtyElem.textContent);
+                    qty++;
+                    qtyElem.textContent = qty;
+                    updateTotal();
+                });
+                decrementBtn.addEventListener('click', () => {
+                    let qty = parseInt(qtyElem.textContent);
+                    if (qty > 1) {
+                        qty--;
+                        qtyElem.textContent = qty;
+                        updateTotal();
+                    }
+                });
+                removeBtn.addEventListener('click', () => {
+                    item.remove();
+                    updateTotal();
+                });
+            }
+
+            updateTotal();
+        });
+    });
+
+    function updateTotal() {
+        let sum = 0;
+        transaksiList.querySelectorAll('[data-kode]').forEach(item => {
+            const harga = parseInt(item.querySelector('p').textContent.replace(/\D/g,''));
+            const qty = parseInt(item.querySelector('.qty').textContent);
+            sum += harga * qty;
+        });
+        total = sum;
+        totalElem.textContent = 'Rp ' + total.toLocaleString();
+    }
+</script>

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Gnarly | Manajemen Barang - Stok</title>
+  </head>
+  <body
+    x-data="{ page: 'stok', 'loaded': true, 'darkMode': false, 'stickyMenu': false, 'sidebarToggle': false, 'scrollTop': false }"
+    x-init="
+         darkMode = JSON.parse(localStorage.getItem('darkMode'));
+         $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))"
+    :class="{'dark bg-gray-900': darkMode === true}"
+  >
+    <!-- ===== Preloader Start ===== -->
+    <include src="./partials/preloader.html"></include>
+    <!-- ===== Preloader End ===== -->
+
+    <!-- ===== Page Wrapper Start ===== -->
+    <div class="flex h-screen overflow-hidden">
+      <!-- ===== Sidebar Start ===== -->
+      <include src="./partials/sidebar.html"></include>
+      <!-- ===== Sidebar End ===== -->
+
+      <!-- ===== Content Area Start ===== -->
+      <div
+        class="relative flex flex-1 flex-col overflow-x-hidden overflow-y-auto"
+      >
+        <!-- Small Device Overlay Start -->
+        <include src="./partials/overlay.html" />
+        <!-- Small Device Overlay End -->
+
+        <!-- ===== Header Start ===== -->
+        <include src="./partials/header.html" />
+        <!-- ===== Header End ===== -->
+
+        <!-- ===== Main Content Start ===== -->
+        <main>
+          <div class="mx-auto max-w-(--breakpoint-2xl) p-4 md:p-6">
+            <!-- Breadcrumb Start -->
+            <div x-data="{ pageName: `Stok Barang`}">
+              <include src="./partials/breadcrumb.html" />
+            </div>
+            <!-- Breadcrumb End -->
+
+            <div
+              class="min-h-screen rounded-2xl border border-gray-200 bg-white px-5 py-7 xl:px-10 xl:py-12 dark:border-gray-800 dark:bg-white/[0.03]"
+            >
+              <h2 class="mb-4 text-xl font-bold">Data Barang</h2>
+              <table class="w-full border border-gray-200 text-sm">
+                <thead class="bg-gray-100">
+                  <tr>
+                    <th class="border-b p-2 text-left">Kode</th>
+                    <th class="border-b p-2 text-left">Nama</th>
+                    <th class="border-b p-2 text-left">Harga</th>
+                    <th class="border-b p-2 text-left">Lokasi</th>
+                    <th class="border-b p-2 text-left">Qty</th>
+                    <th class="border-b p-2 text-left">Kadaluarsa</th>
+                    <th class="border-b p-2 text-left">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="table-body">
+                  <!-- Data akan diisi dengan JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </main>
+        <!-- ===== Main Content End ===== -->
+      </div>
+      <!-- ===== Content Area End ===== -->
+    </div>
+    <!-- ===== Page Wrapper End ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./js/axios.js"></script>
+    <script>
+      const items = [
+        {
+          kode: "BRG001",
+          nama: "Susu UHT",
+          harga: 12000,
+          lokasi: "Gudang",
+          qty: 40,
+          kadaluarsa: "2025-12-10",
+        },
+        {
+          kode: "BRG002",
+          nama: "Roti Tawar",
+          harga: 8000,
+          lokasi: "Toko",
+          qty: 0,
+          kadaluarsa: "2025-11-20",
+        },
+        {
+          kode: "BRG003",
+          nama: "Minyak Goreng",
+          harga: 20000,
+          lokasi: "Toko",
+          qty: 5,
+          kadaluarsa: "2026-02-15",
+        },
+      ];
+
+      function getStatusClass(qty) {
+        if (qty === 0) return "bg-red-100 text-red-700";
+        else if (qty <= 10) return "bg-yellow-100 text-yellow-700";
+        else return "bg-green-100 text-green-700";
+      }
+
+      function getStatusText(qty) {
+        if (qty === 0) return "Habis";
+        else if (qty <= 10) return "Hampir Habis";
+        else return "Tersedia";
+      }
+
+      const tbody = document.getElementById("table-body");
+
+      items.forEach((item) => {
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-gray-50";
+
+        tr.innerHTML = `
+    <td class="border-b p-2">${item.kode}</td>
+    <td class="border-b p-2">${item.nama}</td>
+    <td class="border-b p-2">${item.harga.toLocaleString()}</td>
+    <td class="border-b p-2">${item.lokasi}</td>
+    <td class="border-b p-2">${item.qty}</td>
+    <td class="border-b p-2">${item.kadaluarsa}</td>
+    <td class="border-b p-2">
+      <span class="rounded px-2 py-1 text-xs font-medium ${getStatusClass(item.qty)}">
+        ${getStatusText(item.qty)}
+      </span>
+    </td>
+  `;
+        tbody.appendChild(tr);
+      });
+    </script>
+  </body>
+</html>

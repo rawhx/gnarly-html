@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Gnarly | Manajemen Barang - Barang</title>
+  </head>
+  <body
+    x-data="{ page: 'barang', 'loaded': true, 'darkMode': false, 'stickyMenu': false, 'sidebarToggle': false, 'scrollTop': false }"
+    x-init="
+         darkMode = JSON.parse(localStorage.getItem('darkMode'));
+         $watch('darkMode', value => localStorage.setItem('darkMode', JSON.stringify(value)))"
+    :class="{'dark bg-gray-900': darkMode === true}"
+  >
+    <!-- ===== Preloader Start ===== -->
+    <include src="./partials/preloader.html"></include>
+    <!-- ===== Preloader End ===== -->
+
+    <!-- ===== Page Wrapper Start ===== -->
+    <div class="flex h-screen overflow-hidden">
+      <!-- ===== Sidebar Start ===== -->
+      <include src="./partials/sidebar.html"></include>
+      <!-- ===== Sidebar End ===== -->
+
+      <!-- ===== Content Area Start ===== -->
+      <div
+        class="relative flex flex-1 flex-col overflow-x-hidden overflow-y-auto"
+      >
+        <!-- Small Device Overlay Start -->
+        <include src="./partials/overlay.html" />
+        <!-- Small Device Overlay End -->
+
+        <!-- ===== Header Start ===== -->
+        <include src="./partials/header.html" />
+        <!-- ===== Header End ===== -->
+
+        <!-- ===== Main Content Start ===== -->
+        <main>
+          <div class="mx-auto max-w-(--breakpoint-2xl) p-4 md:p-6">
+            <!-- Breadcrumb Start -->
+            <div x-data="{ pageName: `Penerimaan Barang`}">
+              <include src="./partials/breadcrumb.html" />
+            </div>
+            <!-- Breadcrumb End -->
+
+            <!-- === Tampilan 1: Tabel Informasi Barang === -->
+            <div
+              id="tampilanTable"
+              class="min-h-screen rounded-2xl border border-gray-200 bg-white px-10 py-7 xl:py-12 dark:border-gray-800 dark:bg-white/[0.03]"
+            >
+              <div class="mx-auto">
+                <div class="mb-4 flex items-center justify-between">
+                  <h4 class="text-xl font-bold">Informasi Barang</h4>
+                  <button
+                    onclick="bukaFormTambah()"
+                    class="ow rounded bg-green-500 px-4 py-2 text-sm text-white shadow hover:bg-green-600"
+                  >
+                    Tambah Barang
+                  </button>
+                </div>
+
+                <table
+                  class="min-w-full border border-gray-200"
+                  id="tabelBarang"
+                >
+                  <thead class="bg-gray-100">
+                    <tr>
+                      <th
+                        class="border-b px-4 py-2 text-left text-sm font-semibold text-gray-700"
+                      >
+                        Nota
+                      </th>
+                      <th
+                        class="border-b px-4 py-2 text-left text-sm font-semibold text-gray-700"
+                      >
+                        Total Barang
+                      </th>
+                      <th
+                        class="border-b px-4 py-2 text-left text-sm font-semibold text-gray-700"
+                      >
+                        Tanggal Diterima
+                      </th>
+                      <th
+                        class="border-b px-4 py-2 text-left text-sm font-semibold text-gray-700"
+                      >
+                        Status
+                      </th>
+                      <th
+                        class="border-b px-4 py-2 text-center text-sm font-semibold text-gray-700"
+                      >
+                        Aksi
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-200">
+                    <tr
+                      data-kode="BRG001"
+                      data-nama="Barang 1"
+                      data-harga="15000"
+                      data-status="Menunggu"
+                    >
+                      <td class="px-4 py-2 text-sm text-gray-600">BRG001</td>
+                      <td class="px-4 py-2 text-sm text-gray-600">10</td>
+                      <td class="px-4 py-2 text-sm text-gray-600">
+                        29/10/2025
+                      </td>
+                      <td class="px-4 py-2 text-sm">
+                        <span
+                          class="rounded bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-700"
+                          >Menunggu</span
+                        >
+                      </td>
+                      <td class="px-4 py-2 text-center">
+                        <button
+                          class="rounded bg-blue-500 px-3 py-1 text-xs text-white hover:bg-blue-600"
+                          onclick="lihatBarang(this)"
+                        >
+                          Lihat
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- === Tampilan 2: Form Tambah Informasi Barang === -->
+            <div
+              id="tampilanForm"
+              class="hidden min-h-screen rounded-2xl border border-gray-200 bg-white px-5 px-10 py-7 xl:py-12 dark:border-gray-800 dark:bg-white/[0.03]"
+            >
+              <div class="mb-4 flex items-center justify-between">
+                <h4 class="text-xl font-bold">Tambah Informasi Barang</h4>
+                <button
+                  onclick="kembaliKeTable()"
+                  class="rounded bg-gray-400 px-4 py-2 text-sm text-white hover:bg-gray-500"
+                >
+                  Kembali
+                </button>
+              </div>
+
+              <form
+                id="formTambah"
+                onsubmit="postPenerimaan(event)"
+                class="space-y-4"
+              >
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700"
+                      >No Nota</label
+                    >
+                    <input
+                      type="text"
+                      id="notaInput"
+                      name="no_nota"
+                      placeholder="Masukkan No Nota"
+                      class="mt-1 block w-full rounded-md border border-gray-300 p-2 text-sm"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700"
+                      >Tanggal Diterima</label
+                    >
+                    <input
+                      type="date"
+                      id="tanggalInput"
+                      class="mt-1 block w-full cursor-not-allowed rounded-md border border-gray-300 bg-gray-100 p-2 text-sm"
+                      value=""
+                      readonly
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700"
+                      >Status</label
+                    >
+                    <input
+                      type="text"
+                      id="statusInput"
+                      class="mt-1 block w-full cursor-not-allowed rounded-md border border-gray-300 bg-gray-100 p-2 text-sm"
+                      value="Menunggu"
+                      readonly
+                    />
+                  </div>
+                  <div id="tindakan-section" class="ow">
+                    <label class="mb-3 block text-sm font-medium text-gray-700"
+                      >Tindakan</label
+                    >
+                    <button
+                      onclick="postTindakan('Disetujui')"
+                      type="button"
+                      class="rounded bg-green-500 px-3 py-1 text-sm text-white shadow hover:bg-green-600"
+                    >
+                      Setuju
+                    </button>
+                    <button
+                      onclick="postTindakan('Ditolak')"
+                      type="button"
+                      class="rounded bg-red-500 px-3 py-1 text-sm text-white shadow hover:bg-red-600"
+                    >
+                      Tolak
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Detail Barang -->
+                <div class="mt-6">
+                  <div class="mb-2 flex items-center justify-between">
+                    <h5 class="text-lg font-semibold">Detail Barang</h5>
+                    <button
+                      type="button"
+                      onclick="tambahDetail()"
+                      class="ow rounded bg-green-500 px-3 py-1 text-sm text-white shadow hover:bg-green-600"
+                    >
+                      Tambah Barang
+                    </button>
+                  </div>
+
+                  <table class="min-w-full border border-gray-200 text-sm">
+                    <thead class="bg-gray-100">
+                      <tr>
+                        <th
+                          class="border-b px-3 py-2 text-left font-semibold text-gray-700"
+                        >
+                          Kode
+                        </th>
+                        <th
+                          class="border-b px-3 py-2 text-left font-semibold text-gray-700"
+                        >
+                          Nama
+                        </th>
+                        <th
+                          class="border-b px-3 py-2 text-left font-semibold text-gray-700"
+                        >
+                          Kategori
+                        </th>
+                        <th
+                          class="border-b px-3 py-2 text-left font-semibold text-gray-700"
+                        >
+                          Kadaluarsa
+                        </th>
+                        <th
+                          class="border-b px-3 py-2 text-left font-semibold text-gray-700"
+                        >
+                          Harga
+                        </th>
+                        <th
+                          class="border-b px-3 py-2 text-left font-semibold text-gray-700"
+                        >
+                          Qty
+                        </th>
+                        <th
+                          class="ow border-b px-3 py-2 text-center font-semibold text-gray-700"
+                        >
+                          Aksi
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody id="detailTbody"></tbody>
+                  </table>
+                </div>
+
+                <!-- Tombol Simpan -->
+                <div class="mt-6 flex justify-end">
+                  <button
+                    type="submit"
+                    class="ow rounded bg-blue-600 px-4 py-2 text-sm text-white shadow hover:bg-blue-700"
+                  >
+                    Simpan
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="mx-auto max-w-(--breakpoint-2xl) p-4 md:p-6"></div>
+        </main>
+
+        <!-- ===== Main Content End ===== -->
+      </div>
+      <!-- ===== Content Area End ===== -->
+    </div>
+    <!-- ===== Page Wrapper End ===== -->
+  </body>
+</html>
+
+<link
+  href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css"
+  rel="stylesheet"
+/>
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="./js/axios.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const tanggalInput = document.getElementById("tanggalInput");
+    const userData = localStorage.getItem("user");
+
+    const today = new Date().toISOString().split("T")[0];
+    tanggalInput.value = today;
+
+    let role = "";
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        role = user.role?.toUpperCase() || "";
+      } catch (error) {
+        console.error("Gagal membaca user:", error);
+      }
+    }
+
+    const tindakanSection = document.getElementById("tindakan-section");
+
+    if (role !== "OW") {
+      tindakanSection.style.display = "none"; // sembunyikan
+    } else {
+      tindakanSection.style.display = "block"; // tampilkan
+    }
+    // Jika role bukan OW, sembunyikan semua elemen dengan class .ow
+    if (role === "OW") {
+      // jika bukan OW, sembunyikan
+      document.querySelectorAll(".ow").forEach((el) => {
+        el.style.display = "none";
+      });
+    }
+
+    // Panggil fungsi untuk load data
+    getPenerimaan();
+  });
+
+  async function lihatBarang(button) {
+    const row = button.closest("tr");
+    const id = row.dataset.id; // pastikan dataset.id ada
+    const noNota = row.dataset.kode;
+    const status = row.dataset.status;
+    const userData = localStorage.getItem("user");
+    let role = "";
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        role = user.role?.toUpperCase() || "";
+      } catch {}
+    }
+
+    const tindakanSection = document.getElementById("tindakan-section");
+
+    if (status !== "Menunggu" || role !== "OW") {
+      tindakanSection.style.display = "none"; // sembunyikan
+    } else {
+      tindakanSection.style.display = "block"; // tampilkan
+    }
+
+    // Tampilkan form
+    document.getElementById("tampilanTable").classList.add("hidden");
+    document.getElementById("tampilanForm").classList.remove("hidden");
+
+    const notaInput = document.getElementById("notaInput");
+    notaInput.value = noNota;
+    notaInput.disabled = true;
+
+    const tanggalInput = document.getElementById("tanggalInput");
+
+    const statusInput = document.getElementById("statusInput");
+    statusInput.value = status;
+
+    // Hapus row detail lama
+    const tbody = document.getElementById("detailTbody");
+    tbody.innerHTML = "";
+
+    try {
+      const response = await api.get(`/admin/barang/penerimaan/${id}`);
+      tanggalInput.value =
+        response.data.data.penerimaan.tanggal_diterima.split("T")[0]; // format yyyy-mm-dd
+      const penerimaan = response.data.data.penerimaan;
+      const barang = response.data.data.data_barang;
+
+      // Jika data_barang ada, buat row
+      if (barang) {
+        tambahDetail(); // buat row baru
+        const tr = tbody.lastElementChild;
+        tr.dataset.id = barang.id;
+        const inputs = tr.querySelectorAll("input");
+        const select = tr.querySelector("select");
+
+        inputs[0].value = barang.kode_barang;
+        inputs[1].value = barang.nama_barang;
+        if (select) select.value = barang.kategori;
+        inputs[2].value = barang.tanggal_kadaluarsa.split("T")[0]; // format yyyy-mm-dd
+        inputs[3].value = barang.harga_satuan;
+        inputs[4].value = barang.qty;
+
+        // Disable semua input agar hanya view
+        inputs.forEach((el) => {
+          // jika input bukan harga, disable
+          if (!el.classList.contains("harga")) {
+            el.disabled = true;
+          } else {
+            // hanya disable harga jika role bukan OW
+            if (role !== "OW") {
+              el.disabled = true;
+            } else {
+              el.disabled = false; // OW boleh input harga
+            }
+          }
+        });
+
+        if (select) select.disabled = true;
+      }
+
+      console.log("Status: " + penerimaan.status);
+    } catch (err) {
+      console.error("Gagal ambil detail barang: " + err);
+      alert("Gagal menampilkan detail barang");
+    }
+  }
+
+  async function getPenerimaan() {
+    try {
+      const response = await api.get("/admin/barang/penerimaan");
+      const data = response.data.data;
+
+      const tbody = document.querySelector("#tabelBarang tbody"); // pastikan tbody punya id atau query selector yang tepat
+      tbody.innerHTML = ""; // hapus row lama
+
+      data.forEach((item) => {
+        const tr = document.createElement("tr");
+
+        // format tanggal
+        const tanggal = new Date(item.tanggal_diterima).toLocaleDateString(
+          "id-ID",
+        );
+
+        tr.dataset.kode = item.no_nota;
+        tr.dataset.id = item.id;
+        tr.dataset.nama = `Total Barang: ${item.total_barang}`;
+        tr.dataset.harga = "";
+        tr.dataset.status = item.status;
+
+        const tindakanSection = document.getElementById("tindakan-section");
+
+        tr.innerHTML = `
+        <td class="px-4 py-2 text-sm text-gray-600">${item.no_nota}</td>
+        <td class="px-4 py-2 text-sm text-gray-600">${item.total_barang}</td>
+        <td class="px-4 py-2 text-sm text-gray-600">${tanggal}</td>
+        <td class="px-4 py-2 text-sm">
+          <span class="rounded px-2 py-1 text-xs font-medium ${
+            item.status === "Menunggu"
+              ? "bg-yellow-100 text-yellow-700"
+              : item.status === "Disetujui"
+                ? "bg-green-100 text-green-700"
+                : item.status === "Ditolak"
+                  ? "bg-red-100 text-red-700"
+                  : "bg-gray-100 text-gray-700"
+          }">${item.status}</span>
+        </td>
+        <td class="px-4 py-2 text-center">
+          <button
+            class="rounded bg-blue-500 px-3 py-1 text-xs text-white hover:bg-blue-600"
+            onclick="lihatBarang(this)"
+          >
+            Lihat
+          </button>
+        </td>
+      `;
+
+        tbody.appendChild(tr);
+      });
+    } catch (error) {
+      console.error("Gagal mengambil data penerimaan: " + error);
+    }
+  }
+
+  async function postPenerimaan(event) {
+    event.preventDefault();
+
+    const nota = document.getElementById("notaInput").value.trim();
+
+    // Ambil data barang dari tabel detail
+    const rows = document.querySelectorAll("#detailTbody tr");
+    const detailBarang = [];
+
+    rows.forEach((row) => {
+      const inputs = row.querySelectorAll("input");
+      const select = row.querySelector("select"); // ambil elemen select pertama
+
+      detailBarang.push({
+        kode_barang: inputs[0].value,
+        nama_barang: inputs[1].value,
+        kategori: select ? select.value : "", // value select
+        tanggal_kadaluarsa: inputs[2].value,
+        qty: inputs[4].value,
+      });
+    });
+
+    try {
+      const response = await api.post("/admin/barang/penerimaan", {
+        no_nota: nota,
+        barang: detailBarang,
+      });
+      document.getElementById("notaInput").value = "";
+      const tbody = document.getElementById("detailTbody");
+      tbody.innerHTML = "";
+
+      kembaliKeTable();
+
+      alert("Data penerimaan berhasil ditambahkan!");
+    } catch (error) {
+      console.error("error:", error.response?.data || error);
+      alert("gagal menambahkan data penerimaan");
+    }
+  }
+
+  async function postTindakan(st) {
+    try {
+      const tbody = document.getElementById("detailTbody");
+      const rows = tbody.querySelectorAll("tr");
+
+      // Ambil harga dari setiap row
+      const barang = Array.from(rows).map((row) => {
+        const id = row.dataset.id;
+        const hargaInput = row.querySelector("input.harga"); // pastikan input harga punya class "harga"
+        const harga =
+          st === "Ditolak"
+            ? 0
+            : hargaInput
+              ? parseFloat(hargaInput.value) || 0
+              : 0;
+
+        return {
+          id_barang: row.dataset.id ? parseInt(row.dataset.id) : null,
+          harga: harga,
+        };
+      });
+
+      const response = await api.patch("/admin/barang/penerimaan/1", {
+        status: st,
+        barang: barang,
+      });
+
+      kembaliKeTable();
+      console.log("Berhasil update status:", response.data);
+    } catch (error) {
+      console.error("error:", error.response?.data || error);
+      alert("Gagal memperbarui status");
+    }
+  }
+
+  // === Navigasi antar tampilan ===
+  function bukaFormTambah() {
+    document.getElementById("tampilanTable").classList.add("hidden");
+    document.getElementById("tampilanForm").classList.remove("hidden");
+  }
+
+  function kembaliKeTable() {
+    getPenerimaan();
+    document.getElementById("tampilanForm").classList.add("hidden");
+    document.getElementById("tampilanTable").classList.remove("hidden");
+  }
+
+  // === Tambah & hapus detail barang ===
+  function tambahDetail() {
+    const tbody = document.getElementById("detailTbody");
+    const tr = document.createElement("tr");
+
+    const userData = localStorage.getItem("user");
+    let role = "";
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        role = user.role?.toUpperCase() || "";
+      } catch {}
+    }
+    // Buat id unik untuk select
+    const selectId = `kategori-${Date.now()}`;
+
+    tr.innerHTML = `
+    <td class="py-2 px-3 border-b"><input type="text" class="w-full border rounded p-1 text-sm" placeholder="Kode"></td>
+    <td class="py-2 px-3 border-b"><input type="text" class="w-full border rounded p-1 text-sm" placeholder="Nama Barang"></td>
+    <td class="py-2 px-3 border-b">
+      <select id="${selectId}" name="kategori" class="mt-1 block w-full rounded border p-2">
+        <option value="Makanan">Makanan</option>
+        <option value="Minuman">Minuman</option>
+        <option value="Obat-obatan">Obat-obatan</option>
+        <option value="Lainnya">Lainnya</option>
+      </select>
+    </td>
+    <td class="py-2 px-3 border-b"><input type="date" class="w-full border rounded p-1 text-sm" placeholder="Kadaluarsa" onclick="this.showPicker()"></td>
+    <td class="py-2 px-3 border-b"><input type="number" class="w-full border rounded p-1 harga text-sm ${role !== "OW" ? "border-gray-300 bg-gray-100 cursor-not-allowed" : ""}" placeholder="Harga"></td>
+    <td class="py-2 px-3 border-b"><input type="number" class="w-full border rounded p-1 text-sm" placeholder="Qty"></td>
+    ${
+      role !== "OW"
+        ? `
+      <td class="py-2 px-3 border-b text-center">
+        <button type="button" onclick="hapusDetail(this)" class="text-red-600 hover:text-red-800">❌</button>
+      </td>
+    `
+        : ""
+    }
+  `;
+
+    tbody.appendChild(tr);
+
+    // Inisialisasi TomSelect untuk select baru
+    new TomSelect(`#${selectId}`, {
+      searchField: ["text", "value"],
+      create: false,
+      openOnFocus: true,
+      controlInput: null,
+      onInitialize: function () {
+        const controlInput = this.control_input;
+        if (controlInput) {
+          controlInput.classList.add(
+            "border",
+            "border-gray-300",
+            "bg-white",
+            "rounded-md",
+            "p-2",
+            "text-sm",
+          );
+        }
+      },
+    });
+  }
+
+  function hapusDetail(btn) {
+    btn.closest("tr").remove();
+  }
+</script>
