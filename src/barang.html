@@ -57,7 +57,7 @@
                   <h4 class="text-xl font-bold">Informasi Barang</h4>
                   <button
                     onclick="bukaFormTambah()"
-                    class="ow rounded bg-green-500 px-4 py-2 text-sm text-white shadow hover:bg-green-600"
+                    class="ag rounded bg-green-500 px-4 py-2 text-sm text-white shadow hover:bg-green-600"
                   >
                     Tambah Barang
                   </button>
@@ -213,8 +213,9 @@
                     <h5 class="text-lg font-semibold">Detail Barang</h5>
                     <button
                       type="button"
+                      id="buttonAddBarang"
                       onclick="tambahDetail()"
-                      class="ow rounded bg-green-500 px-3 py-1 text-sm text-white shadow hover:bg-green-600"
+                      class="ag rounded bg-green-500 px-3 py-1 text-sm text-white shadow hover:bg-green-600"
                     >
                       Tambah Barang
                     </button>
@@ -254,7 +255,7 @@
                           Qty
                         </th>
                         <th
-                          class="ow border-b px-3 py-2 text-center font-semibold text-gray-700"
+                          class="ag border-b px-3 py-2 text-center font-semibold text-gray-700"
                         >
                           Aksi
                         </th>
@@ -267,6 +268,7 @@
                 <!-- Tombol Simpan -->
                 <div class="mt-6 flex justify-end">
                   <button
+                    id="submit"
                     type="submit"
                     class="ow rounded bg-blue-600 px-4 py-2 text-sm text-white shadow hover:bg-blue-700"
                   >
@@ -302,31 +304,6 @@
     const today = new Date().toISOString().split("T")[0];
     tanggalInput.value = today;
 
-    let role = "";
-    if (userData) {
-      try {
-        const user = JSON.parse(userData);
-        role = user.role?.toUpperCase() || "";
-      } catch (error) {
-        console.error("Gagal membaca user:", error);
-      }
-    }
-
-    const tindakanSection = document.getElementById("tindakan-section");
-
-    if (role !== "OW") {
-      tindakanSection.style.display = "none"; // sembunyikan
-    } else {
-      tindakanSection.style.display = "block"; // tampilkan
-    }
-    // Jika role bukan OW, sembunyikan semua elemen dengan class .ow
-    if (role === "OW") {
-      // jika bukan OW, sembunyikan
-      document.querySelectorAll(".ow").forEach((el) => {
-        el.style.display = "none";
-      });
-    }
-
     // Panggil fungsi untuk load data
     getPenerimaan();
   });
@@ -354,6 +331,8 @@
     }
 
     // Tampilkan form
+    document.getElementById("buttonAddBarang").classList.add("hidden");
+    document.getElementById("submit").classList.add("hidden");
     document.getElementById("tampilanTable").classList.add("hidden");
     document.getElementById("tampilanForm").classList.remove("hidden");
 
@@ -379,7 +358,7 @@
 
       // Jika data_barang ada, buat row
       if (barang) {
-        tambahDetail(); // buat row baru
+        tambahDetail(true); // buat row baru
         const tr = tbody.lastElementChild;
         tr.dataset.id = barang.id;
         const inputs = tr.querySelectorAll("input");
@@ -500,9 +479,6 @@
         no_nota: nota,
         barang: detailBarang,
       });
-      document.getElementById("notaInput").value = "";
-      const tbody = document.getElementById("detailTbody");
-      tbody.innerHTML = "";
 
       kembaliKeTable();
 
@@ -556,12 +532,17 @@
 
   function kembaliKeTable() {
     getPenerimaan();
+    document.getElementById("notaInput").value = "";
+    const tbody = document.getElementById("detailTbody");
+    tbody.innerHTML = "";
+    const statusInput = document.getElementById("statusInput");
+    statusInput.value = "Menunggu";
     document.getElementById("tampilanForm").classList.add("hidden");
     document.getElementById("tampilanTable").classList.remove("hidden");
   }
 
   // === Tambah & hapus detail barang ===
-  function tambahDetail() {
+  function tambahDetail(deleteDetail = false) {
     const tbody = document.getElementById("detailTbody");
     const tr = document.createElement("tr");
 
@@ -594,7 +575,7 @@
       role !== "OW"
         ? `
       <td class="py-2 px-3 border-b text-center">
-        <button type="button" onclick="hapusDetail(this)" class="text-red-600 hover:text-red-800">❌</button>
+        <button type="button" ${deleteDetail ? "" : 'onclick="hapusDetail(this)"'} class="${deleteDetail ? "text-gray-600" : "text-red-600 hover:text-red-800" } ">❌</button>
       </td>
     `
         : ""

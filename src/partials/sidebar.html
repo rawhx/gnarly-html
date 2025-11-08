@@ -1,20 +1,15 @@
 <aside
   :class="sidebarToggle ? 'translate-x-0 lg:w-[90px]' : '-translate-x-full'"
-  class="sidebar fixed left-0 top-0 z-9999 flex h-screen w-[290px] flex-col overflow-y-hidden border-r border-gray-200 bg-white px-5 dark:border-gray-800 dark:bg-black lg:static lg:translate-x-0"
+  class="sidebar fixed top-0 left-0 z-9999 flex h-screen w-[290px] flex-col overflow-y-hidden border-r border-gray-200 bg-white px-5 lg:static lg:translate-x-0 dark:border-gray-800 dark:bg-black"
 >
   <!-- SIDEBAR HEADER -->
   <div
     :class="sidebarToggle ? 'justify-center' : 'justify-between'"
-    class="flex items-center gap-2 pt-8 sidebar-header pb-7"
+    class="sidebar-header flex items-center gap-2 pt-8 pb-7"
   >
     <a href="index.html">
       <span class="logo" :class="sidebarToggle ? 'hidden' : ''">
         <img class="dark:hidden" src="./images/logo/logo.svg" alt="Logo" />
-        <img
-          class="hidden dark:block"
-          src="./images/logo/logo-dark.svg"
-          alt="Logo"
-        />
       </span>
 
       <img
@@ -28,13 +23,13 @@
   <!-- SIDEBAR HEADER -->
 
   <div
-    class="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar"
+    class="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear"
   >
     <!-- Sidebar Menu -->
     <nav x-data="{selected: $persist('Dashboard')}">
       <!-- Menu Group -->
       <div>
-        <h3 class="mb-4 text-xs uppercase leading-[20px] text-gray-400">
+        <h3 class="mb-4 text-xs leading-[20px] text-gray-400 uppercase">
           <span
             class="menu-group-title"
             :class="sidebarToggle ? 'lg:hidden' : ''"
@@ -44,7 +39,7 @@
 
           <svg
             :class="sidebarToggle ? 'lg:block hidden' : 'hidden'"
-            class="mx-auto fill-current menu-group-icon"
+            class="menu-group-icon mx-auto fill-current"
             width="24"
             height="24"
             viewBox="0 0 24 24"
@@ -60,7 +55,7 @@
           </svg>
         </h3>
 
-        <ul class="flex flex-col gap-4 mb-6">
+        <ul class="mb-6 flex flex-col gap-4">
           <!-- Menu Item Dashboard -->
           <li>
             <a
@@ -113,12 +108,12 @@
 
             <!-- Dropdown Menu Start -->
             <div
-              class="overflow-hidden transform translate"
+              class="translate transform overflow-hidden"
               :class="(selected === 'Dashboard') ? 'block' :'hidden'"
             >
               <ul
                 :class="sidebarToggle ? 'lg:hidden' : 'flex'"
-                class="flex flex-col gap-1 mt-2 menu-dropdown pl-9"
+                class="menu-dropdown mt-2 flex flex-col gap-1 pl-9"
               >
                 <li>
                   <a
@@ -187,14 +182,14 @@
 
             <!-- Dropdown Menu Start -->
             <div
-              class="overflow-hidden transform translate"
+              class="translate transform overflow-hidden"
               :class="(selected === 'Manajemen_Barang') ||  (selected === 'mutasi') || (selected === 'stok') ? 'block' :'hidden'"
             >
               <ul
                 :class="sidebarToggle ? 'lg:hidden' : 'flex'"
-                class="flex flex-col gap-1 mt-2 menu-dropdown pl-9"
+                class="menu-dropdown mt-2 flex flex-col gap-1 pl-9"
               >
-                <li>
+                <li data-role="AG, OW">
                   <a
                     href="barang.html"
                     class="menu-dropdown-item group"
@@ -228,27 +223,29 @@
           <!-- Manajemen Barang Dashboard -->
 
           <!-- Menu POS -->
-          <li>
+          <li data-role="AK">
             <a
               href="pos.html"
               target="_blank"
-              @click="selected = (selected === 'POS' ? '':'POS')"
+              @click="selected = (selected === 'POS' ? 'POS':'')"
               class="menu-item group"
               :class=" (selected === 'POS') && (page === 'POS') ? 'menu-item-active' : 'menu-item-inactive'"
             >
-              <svg 
+              <svg
                 :class="(selected === 'POS') && (page === 'POS') ? 'menu-item-icon-active'  :'menu-item-icon-inactive'"
-                xmlns="http://www.w3.org/2000/svg" 
+                xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
-                fill="none" 
-                viewBox="0 0 24 24" >
+                fill="none"
+                viewBox="0 0 24 24"
+              >
                 <path
                   fill-rule="evenodd"
                   clip-rule="evenodd"
                   fill="none"
                   stroke="currentColor"
-                  d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                  d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
+                />
               </svg>
 
               <span
@@ -262,7 +259,7 @@
           <!-- Menu POS -->
 
           <!-- Menu laporan -->
-          <li>
+          <li data-role="AK, OW">
             <a
               href="#"
               @click.prevent="selected = (selected === 'Laporan' ? '':'Laporan')"
@@ -290,10 +287,10 @@
                 :class="sidebarToggle ? 'lg:hidden' : ''"
               >
                 Laporan
-              </span> 
+              </span>
 
               <svg
-                class="menu-item-arrow absolute right-2.5 top-1/2 -translate-y-1/2 stroke-current"
+                class="menu-item-arrow absolute top-1/2 right-2.5 -translate-y-1/2 stroke-current"
                 :class="[(selected === 'Laporan') ? 'menu-item-arrow-active' : 'menu-item-arrow-inactive', sidebarToggle ? 'lg:hidden' : '' ]"
                 width="20"
                 height="20"
@@ -313,12 +310,12 @@
 
             <!-- Dropdown Menu Start -->
             <div
-              class="overflow-hidden transform translate"
+              class="translate transform overflow-hidden"
               :class="(selected === 'Laporan') ? 'block' :'hidden'"
             >
               <ul
                 :class="sidebarToggle ? 'lg:hidden' : 'flex'"
-                class="flex flex-col gap-1 mt-2 menu-dropdown pl-9"
+                class="menu-dropdown mt-2 flex flex-col gap-1 pl-9"
               >
                 <li>
                   <a
@@ -329,7 +326,7 @@
                     Transaksi
                   </a>
                 </li>
-                <li>
+                <li class="hidden">
                   <a
                     href="404.html"
                     class="menu-dropdown-item group"
@@ -345,8 +342,36 @@
           <!-- Menu laporan -->
         </ul>
       </div>
-      
     </nav>
     <!-- Sidebar Menu -->
   </div>
 </aside>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const userData = localStorage.getItem("user");
+    if (!userData) return;
+
+    const user = JSON.parse(userData);
+    const roleUser = user.role?.toUpperCase();
+
+    // Sembunyikan dulu semua elemen yang memerlukan role
+    document.querySelectorAll("[data-role]").forEach((el) => {
+      el.classList.add("hidden");
+    });
+
+    // Tampilkan elemen yang sesuai role
+    document.querySelectorAll("[data-role]").forEach((el) => {
+      // Ambil daftar role pada elemen, pisahkan dengan koma, dan trim spasi
+      const roleList = el
+        .getAttribute("data-role")
+        .split(",")
+        .map((r) => r.trim().toUpperCase());
+
+      // Jika role user ada dalam daftar element -> tampilkan
+      if (roleList.includes(roleUser)) {
+        el.classList.remove("hidden");
+      }
+    });
+  });
+</script>

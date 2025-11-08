@@ -577,8 +577,7 @@
               Anonymous
             </span>
             <span
-              id="role"
-              class="text-theme-xs mt-0.5 block text-gray-500 dark:text-gray-400"
+              class="role text-theme-xs mt-0.5 block text-gray-500 dark:text-gray-400"
             >
               Role
             </span>
@@ -694,17 +693,33 @@
 
     const userData = localStorage.getItem("user");
 
-  const user = JSON.parse(userData);
-    
+    const user = JSON.parse(userData);
+
     // Ambil elemen dari HTML
     const usernameElements = document.querySelectorAll(".username");
-    const roleElement = document.getElementById("role");
+    const roleElement = document.querySelectorAll(".role");
 
     // Tampilkan data user
-    usernameElements.forEach(el => {
-      el.textContent = user.username || "Anonymous";
+    usernameElements.forEach((el) => {
+      if (user && user.username) {
+        el.textContent = user.username;
+      } else {
+        el.textContent = "Anonymous";
+      }
     });
-    if (roleElement) roleElement.textContent = user.role || "Tidak diketahui";
 
+    roleElement.forEach((el) => {
+      if (user && user.role === "OW") {
+        el.textContent = "Role Owner";
+      } else if (user && user.role === "AK") {
+        el.textContent = "Role Admin Kasir";
+      } else if (user && user.role === "AG") {
+        el.textContent = "Role Admin Gudang";
+      } else if (user && user.role === "KO") {
+        el.textContent = "Role Karyawan Obat-obatan";
+      } else {
+        el.textContent = "Role Tidak Diketahui";
+      }
+    });
   </script>
 </header>

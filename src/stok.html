@@ -78,33 +78,41 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="./js/axios.js"></script>
     <script>
-      const items = [
-        {
-          kode: "BRG001",
-          nama: "Susu UHT",
-          harga: 12000,
-          lokasi: "Gudang",
-          qty: 40,
-          kadaluarsa: "2025-12-10",
-        },
-        {
-          kode: "BRG002",
-          nama: "Roti Tawar",
-          harga: 8000,
-          lokasi: "Toko",
-          qty: 0,
-          kadaluarsa: "2025-11-20",
-        },
-        {
-          kode: "BRG003",
-          nama: "Minyak Goreng",
-          harga: 20000,
-          lokasi: "Toko",
-          qty: 5,
-          kadaluarsa: "2026-02-15",
-        },
-      ];
+      document.addEventListener("DOMContentLoaded", async () => {
+        const items = await fetchItems();
 
+        items.forEach((item) => {
+          const tr = document.createElement("tr");
+          tr.className = "hover:bg-gray-50";
+
+          tr.innerHTML = `
+            <td class="border-b p-2">${item.kode_barang}</td>
+            <td class="border-b p-2">${item.nama_barang}</td>
+            <td class="border-b p-2">${item.harga_satuan.toLocaleString()}</td>
+            <td class="border-b p-2">${item.lokasi}</td>
+            <td class="border-b p-2">${item.qty}</td>
+            <td class="border-b p-2">${item.tanggal_kadaluarsa.split("T")[0]}</td>
+            <td class="border-b p-2">
+              <span class="rounded px-2 py-1 text-xs font-medium ${getStatusClass(item.qty)}">
+                ${getStatusText(item.qty)}
+              </span>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+
+      async function fetchItems() {
+        try {
+          const response = await api.get('/admin/barang');
+          return response.data.data;
+        } catch (error) {
+          console.error('Error fetching items:', error);
+          return [];
+        }
+      }
+      
+    
       function getStatusClass(qty) {
         if (qty === 0) return "bg-red-100 text-red-700";
         else if (qty <= 10) return "bg-yellow-100 text-yellow-700";
@@ -118,26 +126,6 @@
       }
 
       const tbody = document.getElementById("table-body");
-
-      items.forEach((item) => {
-        const tr = document.createElement("tr");
-        tr.className = "hover:bg-gray-50";
-
-        tr.innerHTML = `
-    <td class="border-b p-2">${item.kode}</td>
-    <td class="border-b p-2">${item.nama}</td>
-    <td class="border-b p-2">${item.harga.toLocaleString()}</td>
-    <td class="border-b p-2">${item.lokasi}</td>
-    <td class="border-b p-2">${item.qty}</td>
-    <td class="border-b p-2">${item.kadaluarsa}</td>
-    <td class="border-b p-2">
-      <span class="rounded px-2 py-1 text-xs font-medium ${getStatusClass(item.qty)}">
-        ${getStatusText(item.qty)}
-      </span>
-    </td>
-  `;
-        tbody.appendChild(tr);
-      });
     </script>
   </body>
 </html>

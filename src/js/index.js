@@ -18,8 +18,60 @@ import "./components/image-resize";
 import { protectRoute } from "./route.js";
 
 document.addEventListener("DOMContentLoaded", () => {
+  const token = window.localStorage.getItem("token");
+
+  if (token) {
+    try {
+      const payloadBase64 = token.split(".")[1];
+      const decodedPayload = JSON.parse(atob(payloadBase64));
+      const currentTime = Math.floor(Date.now() / 1000);
+
+      if (decodedPayload.exp && decodedPayload.exp < currentTime) {
+        alert("Token sudah kadaluarsa. Silakan login kembali.");
+        window.localStorage.removeItem("token");
+      }
+    } catch (err) {
+      console.error("Gagal decode token:", err);
+      window.localStorage.removeItem("token");
+    }
+  } else {
+    console.log("Tidak ada token disimpan");
+  }
+
+  hakAkses();
+  
   protectRoute();
 });
+
+function hakAkses() {
+  const userData = window.localStorage.getItem("user");
+  let role = "";
+  if (userData) {
+    try {
+      const user = JSON.parse(userData);
+      role = user.role?.toUpperCase() || "";
+    } catch (error) {
+      console.error("Gagal membaca user:", error);
+    }
+  }
+  
+  // List semua class role
+  const roles = ["AG", "AK", "OW", "KO"];
+
+  // Sembunyikan semua elemen role terlebih dahulu
+  roles.forEach((r) => {
+    document.querySelectorAll("." + r.toLowerCase()).forEach((el) => {
+      el.style.display = "none";
+    });
+  });
+
+  // Tampilkan hanya elemen sesuai role
+  if (role && roles.includes(role)) {
+    document.querySelectorAll("." + role.toLowerCase()).forEach((el) => {
+      el.style.display = "";
+    });
+  }
+}
 
 Alpine.plugin(persist);
 window.Alpine = Alpine;

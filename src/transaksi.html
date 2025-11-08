@@ -54,12 +54,12 @@
               <div class="mb-8 border-b pb-5">
                 <div class="mb-4 flex items-center justify-between">
                   <h2 class="text-xl font-semibold text-gray-700">
-                    📑 Laporan Transaksi Mutasi Barang
+                    Laporan Transaksi Mutasi Barang
                   </h2>
                   <button
                     class="rounded-md bg-green-600 px-4 py-2 text-sm text-white transition hover:bg-green-700"
                   >
-                    🧾 Export Laporan
+                    Export Laporan
                   </button>
                 </div>
 
@@ -95,7 +95,7 @@
                   <button
                     class="rounded-md bg-blue-600 px-5 py-2 text-sm text-white transition hover:bg-blue-700"
                   >
-                    🔍 Tampilkan Laporan
+                    Tampilkan Laporan
                   </button>
                 </div>
               </div>
@@ -103,10 +103,28 @@
               <!-- === Bagian 2: Tabel Laporan Transaksi === -->
               <div>
                 <h3 class="mb-3 text-lg font-semibold text-gray-700">
-                  📦 Data Laporan Transaksi
+                  Data Laporan Transaksi
                 </h3>
+                <!-- Ringkasan -->
+                <div class="mb-6 grid grid-cols-1 gap-4 text-sm md:grid-cols-3">
+                  <div class="rounded-lg border bg-gray-50 p-4">
+                    <p class="text-gray-500">Total Transaksi</p>
+                    <p class="text-lg font-semibold text-gray-700" id="totalTransaksi">0</p>
+                  </div>
+                  <div class="rounded-lg border bg-gray-50 p-4">
+                    <p class="text-gray-500">Total Barang Keluar/Masuk</p>
+                    <p class="text-lg font-semibold text-gray-700" id="totalBarang">0</p>
+                  </div>
+                  <div class="rounded-lg border bg-gray-50 p-4">
+                    <p class="text-gray-500">Total Nilai Transaksi</p>
+                    <p class="text-lg font-semibold text-gray-700" id="totalNilaiTransaksi">Rp 0</p>
+                    </p>
+                  </div>
+                </div>
                 <div class="overflow-x-auto rounded-lg border border-gray-200">
-                  <table class="min-w-full text-left text-sm text-gray-600">
+                  <table
+                    class="min-w-full text-left text-sm text-gray-600"
+                  >
                     <thead class="bg-gray-100 text-xs text-gray-700 uppercase">
                       <tr>
                         <th class="px-4 py-3">No</th>
@@ -118,8 +136,8 @@
                         <th class="px-4 py-3 text-center">Aksi</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr class="border-b hover:bg-gray-50">
+                    <tbody id="dataTransaksi">
+                      <!-- <tr class="border-b hover:bg-gray-50">
                         <td class="px-4 py-3">1</td>
                         <td class="px-4 py-3 font-medium text-gray-800">
                           MT-001
@@ -153,27 +171,9 @@
                             Detail
                           </button>
                         </td>
-                      </tr>
+                      </tr> -->
                     </tbody>
                   </table>
-                </div>
-
-                <!-- Ringkasan -->
-                <div class="mt-6 grid grid-cols-1 gap-4 text-sm md:grid-cols-3">
-                  <div class="rounded-lg border bg-gray-50 p-4">
-                    <p class="text-gray-500">Total Transaksi</p>
-                    <p class="text-lg font-semibold text-gray-700">2</p>
-                  </div>
-                  <div class="rounded-lg border bg-gray-50 p-4">
-                    <p class="text-gray-500">Total Barang Keluar/Masuk</p>
-                    <p class="text-lg font-semibold text-gray-700">33</p>
-                  </div>
-                  <div class="rounded-lg border bg-gray-50 p-4">
-                    <p class="text-gray-500">Total Nilai Transaksi</p>
-                    <p class="text-lg font-semibold text-gray-700">
-                      Rp 1.570.000
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
@@ -184,5 +184,46 @@
       <!-- ===== Content Area End ===== -->
     </div>
     <!-- ===== Page Wrapper End ===== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./js/axios.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        fetchData();
+      });
+
+      async function fetchData() {
+        try {
+          const response = await api.get("/admin/transaksi");
+          const data = response.data.data;
+          console.log(data)
+
+          document.getElementById("dataTransaksi").innerHTML = data.transaksi
+            .map((item, index) => {
+              return `
+                <tr class="border-b hover:bg-gray-50">
+                  <td class="px-4 py-3">${index + 1}</td>
+                  <td class="px-4 py-3 font-medium text-gray-800">${item.kode_transaksi}</td>
+                  <td class="px-4 py-3">${item.created_at.split("T")[0]}</td>
+                  <td class="px-4 py-3">${item.total_barang}</td>
+                  <td class="px-4 py-3">${item.total_jenis}</td>
+                  <td class="px-4 py-3">${item.total_harga.toLocaleString("id-ID")}</td>
+                  <td class="px-4 py-3 text-center">
+                    <button class="rounded bg-blue-500 px-3 py-1.5 text-xs text-white hover:bg-blue-600">
+                      Detail
+                    </button>
+                  </td>
+                </tr>
+              `;
+            })
+            .join("");
+          document.getElementById("totalTransaksi").innerText = data.jumlah;
+          document.getElementById("totalBarang").innerText = data.total_barang;
+          document.getElementById("totalNilaiTransaksi").innerText = "Rp " + data.total.toLocaleString("id-ID");
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      }
+    </script>
   </body>
 </html>

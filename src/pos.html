@@ -7,9 +7,7 @@
       content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
     />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>
-      Gnarly | POS
-    </title>
+    <title>Gnarly | POS</title>
   </head>
   <body
     x-data="{ page: 'POS', 'loaded': true, 'darkMode': false, 'stickyMenu': false, 'sidebarToggle': false, 'scrollTop': false }"
@@ -24,11 +22,11 @@
 
     <!-- ===== Page Wrapper Start ===== -->
     <div class="flex h-screen overflow-hidden">
-        <include src="./partials/sidebar.html"></include>
+      <include src="./partials/sidebar.html"></include>
 
       <!-- ===== Content Area Start ===== -->
       <div
-        class="relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto"
+        class="relative flex flex-1 flex-col overflow-x-hidden overflow-y-auto"
       >
         <!-- Small Device Overlay Start -->
         <include src="./partials/overlay.html" />
@@ -40,24 +38,68 @@
 
         <!-- ===== Main Content Start ===== -->
         <main>
-            <div class="p-4 mx-auto max-w-[1280px] md:p-6">
-                <div class="grid grid-cols-12 gap-4 md:gap-6">
-                    <!-- Konten Kiri -->
-                    <div class="col-span-12 lg:col-span-8 bg-white rounded-lg h-fit p-5 shadow-sm overflow-y-auto">
-                        <h4 class="text-2xl font-bold mb-4">Data Barang</h4>
+          <div class="mx-auto max-w-[1280px] p-4 md:p-6">
+            <div class="grid grid-cols-12 gap-4 md:gap-6">
+              <!-- Konten Kiri -->
+              <div
+                class="col-span-12 h-fit overflow-y-auto rounded-lg bg-white p-5 shadow-sm lg:col-span-8"
+              >
+                <h4 class="mb-4 text-2xl font-bold">Data Barang</h4>
 
-                        <!-- Tabel Data Barang -->
-                        <table class="min-w-full border border-gray-200" id="tabelBarang">
-                            <thead class="bg-gray-100">
-                                <tr>
-                                    <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700 border-b">Kode Barang</th>
-                                    <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700 border-b">Nama Barang</th>
-                                    <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700 border-b">Harga</th>
-                                    <th class="py-2 px-4 text-left text-sm font-semibold text-gray-700 border-b">Qty</th>
-                                    <th class="py-2 px-4 text-sm font-semibold text-gray-700 border-b">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
+                <!-- Tabel Data Barang -->
+                <div class="mb-3">
+                  <input
+                    id="searchBarang"
+                    type="text"
+                    placeholder="Cari kode atau nama barang..."
+                    class="w-full rounded border px-3 py-2 text-sm focus:border-blue-400 focus:ring"
+                  />
+                </div>
+
+                <table
+                  class="min-w-full border border-gray-200"
+                  id="tabelBarang"
+                >
+                  <thead class="bg-gray-100">
+                    <tr>
+                      <th
+                        class="border-b px-4 py-2 text-left text-sm font-semibold text-gray-700"
+                      >
+                        Kode Barang
+                      </th>
+                      <th
+                        class="border-b px-4 py-2 text-left text-sm font-semibold text-gray-700"
+                      >
+                        Nama Barang
+                      </th>
+                      <th
+                        class="border-b px-4 py-2 text-left text-sm font-semibold text-gray-700"
+                      >
+                        Harga
+                      </th>
+                      <th
+                        class="border-b px-4 py-2 text-left text-sm font-semibold text-gray-700"
+                      >
+                        Kadaluarsa
+                      </th>
+                      <th
+                        class="border-b px-4 py-2 text-left text-sm font-semibold text-gray-700"
+                      >
+                        Qty
+                      </th>
+                      <th
+                        class="border-b px-4 py-2 text-sm font-semibold text-gray-700"
+                      >
+                        Aksi
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    id="tbodyBarang"
+                    class="divide-y divide-gray-200"
+                  ></tbody>
+
+                  <!-- <tbody class="divide-y divide-gray-200">
                                 <tr data-kode="BRG001" data-nama="Barang 1" data-harga="15000">
                                     <td class="py-2 px-4 text-sm text-gray-600">BRG001</td>
                                     <td class="py-2 px-4 text-sm text-gray-800">Barang 1</td>
@@ -76,38 +118,47 @@
                                         <button class="addToTransaksi bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">Tambah</button>
                                     </td>
                                 </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                            </tbody> -->
+                </table>
+              </div>
 
+              <!-- Konten Kanan / Transaksi -->
+              <div
+                class="col-span-12 flex h-fit flex-col rounded-lg bg-white p-5 shadow-sm lg:col-span-4"
+              >
+                <!-- Judul -->
+                <h4 class="text-2xl font-bold">Transaksi</h4>
+                <hr class="my-3 border-gray-300" />
 
-                    <!-- Konten Kanan / Transaksi -->
-                    <div class="col-span-12 lg:col-span-4 flex flex-col shadow-sm bg-white p-5 h-fit rounded-lg">
-                        <!-- Judul -->
-                        <h4 class="text-2xl font-bold">Transaksi</h4>
-                        <hr class="border-gray-300 my-3">
-
-                        <!-- Daftar Barang -->
-                       <div class="max-h-[20rem] overflow-y-auto" id="transaksiList">
-                            <!-- Barang akan ditambahkan di sini -->
-                        </div>
-
-                        <hr class="border-gray-300 my-3">
-
-                        <!-- Total -->
-                        <div class="flex justify-between items-center mb-3">
-                            <h2 class="text-xl font-semibold">Total</h2>
-                            <h2 id="total_transaksi" class="text-xl font-semibold">Rp 0.00</h2>
-                        </div>
-
-                        <!-- Tombol Bayar -->
-                        <button class="inline-flex w-full justify-center items-center gap-2 px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-green-500 shadow-theme-xs hover:bg-green-600">
-                            Bayar
-                        </button>
-                    </div>
+                <!-- Daftar Barang -->
+                <div class="max-h-[20rem] overflow-y-auto" id="transaksiList">
+                  <!-- Barang akan ditambahkan di sini -->
+                  <p id="noTransaksi" class="text-center text-gray-500">
+                    Keranjang Kosong
+                  </p>
                 </div>
+
+                <hr class="my-3 border-gray-300" />
+
+                <!-- Total -->
+                <div class="mb-3 flex items-center justify-between">
+                  <h2 class="text-xl font-semibold">Total</h2>
+                  <h2 id="total_transaksi" class="text-xl font-semibold">
+                    Rp 0.00
+                  </h2>
+                </div>
+
+                <!-- Tombol Bayar -->
+                <button
+                  id="btnBayar"
+                  class="shadow-theme-xs inline-flex w-full items-center justify-center gap-2 rounded-lg bg-green-500 px-4 py-3 text-sm font-medium text-white transition hover:bg-green-600"
+                >
+                  Bayar
+                </button>
+              </div>
             </div>
-            </main>
+          </div>
+        </main>
 
         <!-- ===== Main Content End ===== -->
       </div>
@@ -117,83 +168,237 @@
   </body>
 </html>
 
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="./js/axios.js"></script>
+
 <script>
-    const addButtons = document.querySelectorAll('.addToTransaksi');
-    const transaksiList = document.getElementById('transaksiList');
-    const totalElem = document.getElementById('total_transaksi');
-    let total = 0;
+  const transaksiList = document.getElementById("transaksiList");
+  const noTransaksi = document.getElementById("noTransaksi");
+  const totalElem = document.getElementById("total_transaksi");
+  let total = 0;
 
-    addButtons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const row = e.target.closest('tr');
-            const kode = row.dataset.kode;
-            const nama = row.dataset.nama;
-            const harga = parseInt(row.dataset.harga);
+  // Event Delegation untuk klik tombol Tambah
+  document.addEventListener("click", (e) => {
+    if (!e.target.classList.contains("addToTransaksi")) return;
 
-            // Cek apakah barang sudah ada di transaksi
-            let existing = transaksiList.querySelector(`[data-kode="${kode}"]`);
-            if (existing) {
-                let qtyElem = existing.querySelector('.qty');
-                let qty = parseInt(qtyElem.textContent);
-                qty++;
-                qtyElem.textContent = qty;
-            } else {
-                // Tambahkan ke transaksi
-                const item = document.createElement('div');
-                item.classList.add('flex', 'justify-between', 'items-center', 'py-2', 'border-b', 'border-gray-200');
-                item.dataset.kode = kode;
-                item.innerHTML = `
-                    <div class="flex-1">
-                        <h5 class="font-medium">${nama}</h5>
-                        <p class="text-sm text-gray-500">Rp ${harga.toLocaleString()}</p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 decrement">-</button>
-                        <span class="w-6 text-center qty">1</span>
-                        <button class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 increment">+</button>
-                        <button class="ml-2 text-red-500 font-bold hover:text-red-600 remove">×</button>
-                    </div>
-                `;
-                transaksiList.appendChild(item);
+    const row = e.target.closest("tr");
+    console.log(row.dataset);
+    const kode = row.dataset.kode;
+    const nama = row.dataset.nama;
+    const id_barang = row.dataset.id_barang;
+    const harga = parseInt(row.dataset.harga);
+    noTransaksi.classList.add("hidden");
+    let existing = transaksiList.querySelector(`[data-kode="${kode}"]`);
 
-                // Tambahkan event untuk +, -, ×
-                const incrementBtn = item.querySelector('.increment');
-                const decrementBtn = item.querySelector('.decrement');
-                const removeBtn = item.querySelector('.remove');
-                const qtyElem = item.querySelector('.qty');
+    if (existing) {
+      let qtyElem = existing.querySelector(".qty");
+      let qty = parseInt(qtyElem.textContent);
+      qty++;
+      qtyElem.textContent = qty;
+    } else {
+      const item = document.createElement("div");
+      item.classList.add(
+        "flex",
+        "justify-between",
+        "items-center",
+        "py-2",
+        "border-b",
+        "border-gray-200",
+      );
+      item.dataset.kode = kode;
+      item.dataset.id_barang = id_barang;
 
-                incrementBtn.addEventListener('click', () => {
-                    let qty = parseInt(qtyElem.textContent);
-                    qty++;
-                    qtyElem.textContent = qty;
-                    updateTotal();
-                });
-                decrementBtn.addEventListener('click', () => {
-                    let qty = parseInt(qtyElem.textContent);
-                    if (qty > 1) {
-                        qty--;
-                        qtyElem.textContent = qty;
-                        updateTotal();
-                    }
-                });
-                removeBtn.addEventListener('click', () => {
-                    item.remove();
-                    updateTotal();
-                });
-            }
+      item.innerHTML = `
+        <div class="flex-1">
+            <h5 class="font-medium">${nama}</h5>
+            <p class="text-sm text-gray-500">Rp ${harga.toLocaleString()}</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <button class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 decrement">-</button>
+            <span class="w-6 text-center qty">1</span>
+            <button class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 increment">+</button>
+            <button class="ml-2 text-red-500 font-bold hover:text-red-600 remove">×</button>
+        </div>
+      `;
 
-            updateTotal();
-        });
+      transaksiList.appendChild(item);
+    }
+
+    updateTotal();
+  });
+
+  // Event Delegation untuk tombol + - ×
+  document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("increment")) {
+      let qtyElem = e.target.closest("[data-kode]").querySelector(".qty");
+      qtyElem.textContent = parseInt(qtyElem.textContent) + 1;
+      updateTotal();
+    }
+
+    if (e.target.classList.contains("decrement")) {
+      let qtyElem = e.target.closest("[data-kode]").querySelector(".qty");
+      let qty = parseInt(qtyElem.textContent);
+      if (qty > 1) qtyElem.textContent = qty - 1;
+      updateTotal();
+    }
+
+    if (e.target.classList.contains("remove")) {
+      e.target.closest("[data-kode]").remove();
+      updateTotal();
+    }
+  });
+
+  function updateTotal() {
+    let sum = 0;
+    transaksiList.querySelectorAll("[data-kode]").forEach((item) => {
+      const harga = parseInt(
+        item.querySelector("p").textContent.replace(/\D/g, ""),
+      );
+      const qty = parseInt(item.querySelector(".qty").textContent);
+      sum += harga * qty;
+    });
+    total = sum;
+    if (total === 0) {
+      noTransaksi.classList.remove("hidden");
+    } else {
+      noTransaksi.classList.add("hidden");
+    }
+    totalElem.textContent = "Rp " + total.toLocaleString("id-ID");
+  }
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    fetchDataBarang();
+  });
+
+  async function fetchDataBarang() {
+    const tbody = document.getElementById("tbodyBarang");
+
+    try {
+      const response = await api.get("/admin/barang/toko");
+      const items = response.data.data || [];
+      tbody.innerHTML = "";
+
+      items.forEach((item) => {
+        tbody.innerHTML += `
+        <tr class="hover:bg-gray-50"
+            data-kode="${item.kode_barang}"
+            data-nama="${item.nama_barang}"
+            data-id_barang="${item.id_detail_barang}"
+            data-harga="${item.harga_satuan}">
+          <td class="py-2 px-4 text-sm text-gray-600">${item.kode_barang}</td>
+          <td class="py-2 px-4 text-sm text-gray-800">${item.nama_barang}</td>
+          <td class="py-2 px-4 text-sm text-gray-600">Rp ${item.harga_satuan.toLocaleString("id-ID")}</td>
+          <td class="py-2 px-4 text-sm text-gray-600">${item.tanggal_kadaluarsa.split("T")[0]}</td>
+          <td class="py-2 px-4 text-sm text-center align-middle">
+            <span
+              class="py-2 px-4 inline-block text-sm font-medium rounded-lg ${
+                item.qty <= 0
+                  ? "text-red-700 bg-red-100"
+                  : item.qty <= 5
+                    ? "text-yellow-700 bg-yellow-100"
+                    : "text-gray-700 bg-gray-100"
+              }"
+            >
+              ${item.qty}
+            </span>
+          </td>
+          <td class="py-2 px-4 text-center">
+            <button class="addToTransaksi bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition">
+              Tambah
+            </button>
+          </td>
+        </tr>`;
+      });
+    } catch (error) {
+      console.error("Gagal memuat data barang:", error);
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">Gagal memuat data...</td></tr>`;
+    }
+  }
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("searchBarang");
+    const tbody = document.getElementById("tbodyBarang");
+
+    searchInput.addEventListener("keyup", () => {
+      const filter = searchInput.value.toLowerCase();
+
+      tbody.querySelectorAll("tr").forEach((row) => {
+        const kode = row.getAttribute("data-kode")?.toLowerCase() || "";
+        const nama = row.getAttribute("data-nama")?.toLowerCase() || "";
+
+        // Jika cocok, tampilkan — jika tidak cocok, sembunyikan
+        if (kode.includes(filter) || nama.includes(filter)) {
+          row.classList.remove("hidden");
+        } else {
+          row.classList.add("hidden");
+        }
+      });
+    });
+  });
+</script>
+
+<script>
+  const btnBayar = document.getElementById("btnBayar");
+
+  btnBayar.addEventListener("click", async () => {
+    // Ambil item transaksi dari keranjang
+    const items = [];
+    transaksiList.querySelectorAll("[data-kode]").forEach((item) => {
+      items.push({
+        id_barang: parseInt(item.dataset.id_barang),
+        kode_barang: item.dataset.kode,
+        nama_barang: item.dataset.nama,
+        harga_satuan: parseInt(
+          item.querySelector("p").textContent.replace(/\D/g, ""),
+        ),
+        qty: parseInt(item.querySelector(".qty").textContent),
+      });
     });
 
-    function updateTotal() {
-        let sum = 0;
-        transaksiList.querySelectorAll('[data-kode]').forEach(item => {
-            const harga = parseInt(item.querySelector('p').textContent.replace(/\D/g,''));
-            const qty = parseInt(item.querySelector('.qty').textContent);
-            sum += harga * qty;
-        });
-        total = sum;
-        totalElem.textContent = 'Rp ' + total.toLocaleString();
+    // Jika keranjang kosong
+    if (items.length === 0) {
+      alert("Keranjang masih kosong!");
+      return;
     }
+
+    // Ambil total
+    const totalBayar = parseInt(totalElem.textContent.replace(/\D/g, ""));
+
+    // Payload ke backend
+    const payload = {
+      total: totalBayar,
+      barang: items,
+    };
+
+    try {
+      const confirmed = confirm("Yakin ingin memproses transaksi ini?");
+      if (!confirmed) return;
+
+      const response = await api.post("/admin/transaksi", payload);
+
+      alert("Transaksi berhasil!");
+      fetchDataBarang();
+
+      transaksiList.innerHTML = `<p id="noTransaksi" class="text-center text-gray-500">Keranjang Kosong</p>`;
+      totalElem.textContent = "Rp 0";
+    } catch (err) {
+      let message = "Gagal mengirim transaksi ke server.";
+
+      // Jika server mengirimkan pesan error yang jelas
+      if (err?.response?.data?.message) {
+        message = err.response.data.message;
+      }
+
+      // Jika error lain (misal koneksi terputus)
+      else if (err?.message) {
+        message = err.message;
+      }
+
+      alert(message);
+    }
+  });
 </script>

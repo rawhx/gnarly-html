@@ -50,7 +50,7 @@
                 <h4 class="text-xl font-bold">Data Mutasi</h4>
                 <button
                   onclick="bukaFormTambah()"
-                  class="rounded bg-green-500 px-4 py-2 text-sm text-white shadow hover:bg-green-600"
+                  class="ak ko rounded bg-green-500 px-4 py-2 text-sm text-white shadow hover:bg-green-600"
                 >
                   Tambah Mutasi
                 </button>
@@ -103,6 +103,11 @@
                       class="border-b px-3 py-2 text-left font-semibold text-gray-700"
                     >
                       Tanggal
+                    </th>
+                    <th
+                      class="ag border-b px-3 py-2 text-left font-semibold text-gray-700"
+                    >
+                      Aksi
                     </th>
                   </tr>
                 </thead>
@@ -524,8 +529,8 @@
                         : "bg-yellow-100 text-yellow-700";
 
                   // Format tanggal (YYYY-MM-DD -> DD/MM/YYYY)
-                  let tgl = row.tanggal
-                    ? new Date(row.tanggal).toLocaleDateString("id-ID")
+                  let tgl = row.created_at
+                    ? new Date(row.created_at).toLocaleDateString("id-ID")
                     : "-";
 
                   tbody.innerHTML += `
@@ -543,6 +548,14 @@
                           </span>
                         </td>
                         <td class="px-3 py-2">${tgl}</td>
+                        <td class="ag px-3 py-2">
+                          <button ${row.status === "Diterima" ? "disabled" : ""} onClick="aksi(${row.id_mutasi}, 'Diterima')" class="bg-blue-500 px-3 py-1 text-white rounded text-sm hover:bg-blue-600 ${row.status !== "Menunggu" ? "cursor-not-allowed opacity-50" : ""}">
+                            Setuju
+                          </button>
+                          <button ${row.status === "Ditolak" ? "disabled" : ""} onClick="aksi(${row.id_mutasi}, 'Ditolak')" class="bg-red-500 px-3 py-1 text-white rounded text-sm hover:bg-red-600 ${row.status !== "Menunggu" ? "cursor-not-allowed opacity-50" : ""}">
+                            Tolak
+                          </button>
+                        </td>
                       </tr>
                     `;
                 });
@@ -556,8 +569,63 @@
                       </tr>
                     `;
                 }
+                hakAkses();
               } catch (err) {
                 console.error(err);
+              }
+            }
+
+            async function aksi(id_mutasi, aksi) {
+              try {
+                const payload = {
+                  status: aksi,
+                };
+
+                const response = await api.patch(
+                  "/admin/mutasi/" + id_mutasi,
+                  payload,
+                );
+
+                if (response.status === 200) {
+                  alert("Aksi berhasil dilakukan.");
+                  loadMutasi();
+                }
+              } catch (err) {
+                console.error("Gagal melakukan aksi:", err);
+                alert("Gagal melakukan aksi. Silakan coba lagi.");
+              }
+            }
+
+            function hakAkses() {
+              let role = "";
+              if (userData) {
+                try {
+                  const user = JSON.parse(userData);
+                  role = user.role?.toUpperCase() || "";
+                } catch (error) {
+                  console.error("Gagal membaca user:", error);
+                }
+              }
+
+              // List semua class role
+              const roles = ["AG", "AK", "OW", "KO"];
+
+              // Sembunyikan semua elemen role terlebih dahulu
+              roles.forEach((r) => {
+                document
+                  .querySelectorAll("." + r.toLowerCase())
+                  .forEach((el) => {
+                    el.style.display = "none";
+                  });
+              });
+
+              // Tampilkan hanya elemen sesuai role
+              if (role && roles.includes(role)) {
+                document
+                  .querySelectorAll("." + role.toLowerCase())
+                  .forEach((el) => {
+                    el.style.display = "";
+                  });
               }
             }
           </script>
