@@ -161,6 +161,13 @@
                       class="mt-1 block w-full rounded-md border border-gray-300 p-2 text-sm"
                       required
                     />
+                    <input
+                      type="hidden"
+                      id="id"
+                      name="id"
+                      class="mt-1 block w-full hidden rounded-md border border-gray-300 p-2 text-sm"
+                      hidden
+                    />
                   </div>
                   <div>
                     <label class="block text-sm font-medium text-gray-700"
@@ -340,6 +347,8 @@
     notaInput.value = noNota;
     notaInput.disabled = true;
 
+    document.getElementById("id").value = id;
+
     const tanggalInput = document.getElementById("tanggalInput");
 
     const statusInput = document.getElementById("statusInput");
@@ -511,7 +520,7 @@
         };
       });
 
-      const response = await api.patch("/admin/barang/penerimaan/1", {
+      const response = await api.patch("/admin/barang/penerimaan/"+document.getElementById("id").value, {
         status: st,
         barang: barang,
       });
