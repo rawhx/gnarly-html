@@ -511,6 +511,10 @@
               ? parseFloat(hargaInput.value) || 0
               : 0;
 
+        if (harga <= 0 && st === "Disetujui") {
+          alert("Harga harus diisi dan lebih dari 0 untuk barang yang disetujui.");
+        }
+
         return {
           id_barang: row.dataset.id ? parseInt(row.dataset.id) : null,
           harga: harga,
