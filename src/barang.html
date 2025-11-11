@@ -377,7 +377,10 @@
 
           inputs[0].value = item.kode_barang;
           inputs[1].value = item.nama_barang;
-          if (select) select.value = item.kategori;
+          if (select) {
+            const val = item.kategori ? item.kategori.toLowerCase() : "";
+            select.value = val;
+          }
           inputs[2].value = item.tanggal_kadaluarsa.split("T")[0];
           inputs[3].value = item.harga_satuan;
           inputs[4].value = item.qty;
@@ -512,7 +515,9 @@
               : 0;
 
         if (harga <= 0 && st === "Disetujui") {
-          throw new Error("Harga harus diisi dan lebih dari 0 untuk barang yang disetujui.");
+          throw new Error(
+            "Harga harus diisi dan lebih dari 0 untuk barang yang disetujui.",
+          );
         }
 
         return {
@@ -533,7 +538,11 @@
       console.log("Berhasil update status:", response.data);
     } catch (error) {
       console.error("error:", error.response?.data || error);
-      alert(error.response?.data || error.message || "Gagal mengupdate status penerimaan");
+      alert(
+        error.response?.data ||
+          error.message ||
+          "Gagal mengupdate status penerimaan",
+      );
     }
   }
 
