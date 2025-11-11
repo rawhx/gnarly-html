@@ -379,10 +379,17 @@
           inputs[1].value = item.nama_barang;
           if (select) {
             const val = item.kategori?.trim().toLowerCase();
+
             const opt = Array.from(select.options).find(
               (o) => o.value.trim().toLowerCase() === val,
             );
-            if (opt) opt.selected = true;
+
+            if (opt) {
+              const ts =
+                select.tomselect || select.tomSelect || select.tom_select;
+              
+              if (ts) ts.setValue(opt.value, true);
+            }
           }
 
           inputs[2].value = item.tanggal_kadaluarsa.split("T")[0];
