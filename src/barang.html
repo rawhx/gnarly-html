@@ -578,7 +578,7 @@
       </select>
     </td>
     <td class="py-2 px-3 border-b"><input type="date" class="w-full border rounded p-1 text-sm" placeholder="Kadaluarsa" onclick="this.showPicker()"></td>
-    <td class="py-2 px-3 border-b"><input type="number" class="w-full border rounded p-1 harga text-sm ${role !== "OW" ? "border-gray-300 bg-gray-100 cursor-not-allowed" : ""}" placeholder="Harga"></td>
+    <td class="py-2 px-3 border-b"><input type="number" class="w-full border rounded p-1 harga text-sm ${role !== "OW" ? "border-gray-300 bg-gray-100 cursor-not-allowed" : ""}" ${role !== "OW" ? "" : "required"}" placeholder="Harga"></td>
     <td class="py-2 px-3 border-b"><input type="number" class="w-full border rounded p-1 text-sm" placeholder="Qty"></td>
     ${
       role !== "OW"
