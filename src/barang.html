@@ -512,7 +512,7 @@
               : 0;
 
         if (harga <= 0 && st === "Disetujui") {
-          alert("Harga harus diisi dan lebih dari 0 untuk barang yang disetujui.");
+          throw new Error("Harga harus diisi dan lebih dari 0 untuk barang yang disetujui.");
         }
 
         return {
@@ -533,7 +533,7 @@
       console.log("Berhasil update status:", response.data);
     } catch (error) {
       console.error("error:", error.response?.data || error);
-      alert("Gagal memperbarui status");
+      alert(error.response?.data || error.message || "Gagal mengupdate status penerimaan");
     }
   }
 
