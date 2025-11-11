@@ -270,7 +270,7 @@
                   <button
                     id="submit"
                     type="submit"
-                    class="ow rounded bg-blue-600 px-4 py-2 text-sm text-white shadow hover:bg-blue-700"
+                    class="ag rounded bg-blue-600 px-4 py-2 text-sm text-white shadow hover:bg-blue-700"
                   >
                     Simpan
                   </button>
@@ -323,6 +323,12 @@
     }
 
     const tindakanSection = document.getElementById("tindakan-section");
+
+    if (status !== "Menunggu" || role !== "OW") {
+      tindakanSection.style.display = "none"; // sembunyikan
+    } else {
+      tindakanSection.style.display = "block"; // tampilkan
+    }
 
     // Tampilkan form
     document.getElementById("buttonAddBarang").classList.add("hidden");
